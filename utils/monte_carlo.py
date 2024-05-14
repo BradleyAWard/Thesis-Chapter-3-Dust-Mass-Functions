@@ -134,44 +134,47 @@ def mcmc_array(model, function_results, fixed_params_list=None, fixed_values_lis
     """
     Fitting Schechter functions to arrays of data with MCMC
     
-    :param model:
-    :param function_results:
-    :param fixed_params_list:
-    :param fixed_values_list:
+    :param model: Choice of "luminosity" or "dust mass"
+    :param function_results: Dictionary of function results
+    :param fixed_params_list: List of fixed parameter names
+    :param fixed_values_list: List of fixed parameter values
     :param nwalkers: Number of walkers in MC (Default 50)
     :param niters: Number of MC iterations (Default 10000)
     :param sigma: Exploration parameter of MC (Default 0.001)
-    :param logx_min_list:
-    :param logx_max_list:
+    :param logx_min_list: List of minimum parameter values [log(X)]
+    :param logx_max_list: List of maximum parameter values [log(X)]
     :param progress: Show progress (Default True)
-    :param low_percentile:
-    :param median_percentile:
-    :param high_percentile:
-    :param burn_in:
-    :return: 
+    :param low_percentile: Low percentile of error on parameters
+    :param median_percentile: Median percentile on parameters
+    :param high_percentile: High percentile of error on parameters
+    :param burn_in: Number of iterations of burn-in
+    :return: An array of Schechter parameter values
     """
 
     vary_params_array = []
     sampler_array = []
 
-    # Error handling
+    # Error handling (number of fixed parameters must match number of redshift bins)
     if fixed_params_list is not None:
         if len(fixed_params_list) != len(function_results['z_bin_centers']):
             raise ValueError('The names of the fixed parameters does not match the number of redshift slices. If you do not want a fixed parameter for a particular slice add an empty list, [].')
     else:
         fixed_params_list = [[] for _ in range(len(function_results['z_bin_centers']))]
 
+    # Error handling (number of fixed parameters must match number of redshift bins)
     if fixed_values_list is not None:
         if len(fixed_values_list) != len(function_results['z_bin_centers']):
             raise ValueError('The values of the fixed parameters does not match the number of redshift slices. If you do not want a fixed parameter for a particular slice add an empty list, [].')
     else:
         fixed_values_list = [[] for _ in range(len(function_results['z_bin_centers']))]
 
+    # Set no minimum or maximum if not given
     if logx_min_list is None:
         logx_min_list = [None for _ in range(len(function_results['z_bin_centers']))]
     if logx_max_list is None:
         logx_max_list = [None for _ in range(len(function_results['z_bin_centers']))]
 
+    # Monte Carlo fitting for each redshift slice
     logx_vals = function_results['logx_bin_centers']
     for z_it in range(len(function_results['z_bin_centers'])):
         y_vals = function_results['phi_grid'][z_it]
@@ -182,6 +185,7 @@ def mcmc_array(model, function_results, fixed_params_list=None, fixed_values_lis
         vary_params_array.append(vary_params)
         sampler_array.append(sampler)
 
+    # List of model parameters depending on model
     if model == 'luminosity':
         parameters = ["logl_star", "logphi_star_perdex", "alpha"]
     elif model == 'dust mass':
@@ -192,6 +196,7 @@ def mcmc_array(model, function_results, fixed_params_list=None, fixed_values_lis
     percentiles = [low_percentile, median_percentile, high_percentile]
     percentile_name = ['_low', '', '_high']
 
+    # Create a results dictionary
     results = {}
     for i in range(len(parameters)):
         for j in range(len(percentile_name)):
@@ -199,6 +204,7 @@ def mcmc_array(model, function_results, fixed_params_list=None, fixed_values_lis
             id_name = param+percentile_name[j]
             results[id_name] = np.zeros(len(sampler_array))
 
+    # At each redshift sample the parameter space for best values
     for z_it in range(len(sampler_array)):
         sampler = sampler_array[z_it]
         fixed_params = fixed_params_list[z_it]
@@ -220,11 +226,11 @@ def mcmc_array(model, function_results, fixed_params_list=None, fixed_values_lis
                 mcmc_results = np.percentile(sample_theta[:, i], percentiles[j])
                 results[id_name][z_it] = mcmc_results
 
+    # Add sampler, fixed parameters and best fitting parameters to dictionary
     results['sampler_array'] = sampler_array
     results['fixed_params'] = fixed_params_list
     results['fixed_values'] = fixed_values_list
     results['vary_params'] = vary_params_array
-
     results['logphi_star_low'] = np.log10((10**results['logphi_star_perdex_low'])/np.log(10))
     results['logphi_star'] = np.log10((10**results['logphi_star_perdex'])/np.log(10))
     results['logphi_star_high'] = np.log10((10**results['logphi_star_perdex_high'])/np.log(10))
