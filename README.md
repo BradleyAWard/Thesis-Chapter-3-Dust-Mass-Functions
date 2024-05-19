@@ -1,1 +1,11 @@
-This is the README
+## Redshift Evolution of the Dust Mass Function
+
+In Chapter 3, we derived dust masses for the galaxies in the SGP and derived the dust mass function in redshift slices of width 0.2 out to z = 1.
+
+-   To estimate the dust masses of our sample, we first fitted modified blackbody models to their far-IR spectra to derive the luminosity weighted temperatures of the dust. We found that the median dust temperature is ~20 K and remains roughly constant from z = 0 to z = 1.
+
+-   We derived binned dust mass functions in two ways: first by assuming that all galaxies can be described by a single SED with a dust temperature of ~20 K (in order to assume a uniform luminosity limit across the sample), and second, by allowing the dust temperature to be a free parameter in the SED fitting between 15 and 25 K. The two DMFs were in reasonable agreement at all redshifts. We estimated that the galaxies detected by *Herschel* were typically between 25 and 60 times dustier at z = 1 than they are locally, dependent on the distribution of dust temperatures.
+
+-   The integration of our DMFs at each redshift interval gave us measurements for the total amount of dust in galaxies at different epochs, from which we could estimate the dust mass density evolution from 8 Gyr in the past to the present day. In agreement with previous H-ATLAS studies that have measured the dust mass density out to z ~ 0.5 (e.g. Dunne et al., 2011), we observed a rapid decrease in dust density to z = 0, by a factor of approximately 2. The decrease in dust density over the last 8 billion years can be attributed to a depletion of dust due to star formation, dust destruction outweighing production, or dust lost from the galaxy to its halo.
+
+-   There is tentative evidence of a peak in the dust mass density at z ~ 0.8 - 1, although this is subject to potentially large uncertainties in the highest redshift bin. When compared to measurements of the star formation rate density collated in the literature, which show a definitive peak at z ~ 2, we predict a short timescale of approximately 2 to 3 Gyr between the peak in the star formation rate density and dust mass density. This would suggest that dust production pathways from stellar sources likely form a substantial amount of dust.
